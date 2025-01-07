@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détection de Proximité avec Alerte Sonore</title>
+    <!-- Inclure l'API Google Maps avec votre clé API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGFywqcaiCQdZTSyzkIUnHA3twrdwY8mo&libraries=geometry"></script>
+</head>
+<body>
+    <h1>Détection de la Proximité</h1>
+    <p>Cette page détecte votre proximité par rapport à une coordonnée cible et joue un son lorsque vous êtes proche.</p>
+
+    <!-- Zone pour afficher la carte -->
+    <div id="map" style="height: 500px; width: 100%;"></div>
+
+    <script>
+        var map;
+        var userMarker;
+        var targetLatLng = {lat: 48.8566, lng: 2.3522}; // Coordonnée cible (Paris, ajustez comme nécessaire)
+
+        // Fonction d'initialisation de la carte
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: targetLatLng,
+                zoom: 14
+            });
+
+            // Marqueur pour la coordonnée cible
+            var targetMarker = new google.maps.Marker({
+                position: targetLatLng,
+                map: map,
+                title: 'Cible'
+            });
+
+            // Géolocalisation de l'utilisateur
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    // Marqueur pour la position de l'utilisateur
+                    userMarker = new google.maps.Marker({
+                        position: userLocation,
+                        map: map,
+                        title: 'Vous êtes ici'
+                    });
+
+                    // Vérification de la proximité entre l'utilisateur et la cible
+                    checkProximity(userLocation);
+                }, function() {
+                    alert("Erreur de géolocalisation.");
+                });
+            } else {
+                alert("La géolocalisation n'est pas supportée par ce navigateur.");
+            }
+        }
+
+        // Fonction pour vérifier la proximité et jouer un son
+        function checkProximity(userLocation) {
+            var userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
+            var targetLatLngObj = new google.maps.LatLng(targetLatLng.lat, targetLatLng.lng);
+
+            var distance = google.maps.geometry.spherical.computeDistanceBetween(userLatLng, targetLatLngObj);
+            console.log("Distance : " + distance + " mètres");
+
+            // Si la distance est inférieure à 100 mètres, jouer un son
+            if (distance < 100) {
+                playSound();
+            }
+
+            // Rafraîchir la position de l'utilisateur toutes les 5 secondes
+            setTimeout(function() {
+                checkProximity(userLocation);
+            }, 5000);
+        }
+
+        // Fonction pour jouer un son
+        function playSound() {
+            var audio = new Audio('"C:\Users\lbred\Downloads\ALRMClok_Reveil electronique sonnerie 1 (ID 0035)_LS.wav"'); // Remplacer par le chemin de votre fichier sonore
+            audio.play();
+        }
+
+        // Initialisation de la carte à la charge de la page
+        window.onload = initMap;
+    </script>
+</body>
+</html>
