@@ -19,7 +19,6 @@
         var map;
         var userMarker;
         var radarMarkers = [
-
 			{ lat: 49.95842, lng: 2.85479, title: '101' },
 			{ lat: 48.67029, lng: 2.27976, title: '103' },
 			{ lat: 48.63212, lng: 2.4065, title: '105' },
@@ -3287,54 +3286,64 @@
 			{ lat: 48.5646, lng: 2.17204, title: 'FE391504' },
 			{ lat: 48.97523, lng: 2.33639, title: 'FE395501' },
 			{ lat: 48.97519, lng: 2.33751, title: 'FE395502' }
-
         ];
 
         // Fonction d'initialisation de la carte pour afficher la position de l'utilisateur
         function initMap() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var userLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-
-                    map = new google.maps.Map(document.getElementById('map'), {
-                        center: userLocation,
-                        zoom: 14
-                    });
-
-					const icon = {
-						url: "./images/position.png", // url
-						scaledSize: new google.maps.Size(50, 50), // scaled size
-						origin: new google.maps.Point(0,0), // origin
-						anchor: new google.maps.Point(0, 0) // anchor
-					};
-                    // Marqueur pour la position de l'utilisateur
-                    userMarker = new google.maps.Marker({
-                        position: userLocation,
-                        map: map,
-						icon: icon,
-                        title: 'Vous êtes ici'
-                    });
-
-                    // Marquer tous les radars sur la carte
-                    radarMarkers.forEach(function(radar) {
-                        new google.maps.Marker({
-                            position: radar,
-                            map: map,
-                            title: radar.title
-                        });
-                    });
-
-                    // Vérification de la proximité par rapport aux radars
-                    checkProximity(userLocation);
-                }, function() {
-                    alert("Erreur de géolocalisation.");
-                });
+                navigator.geolocation.getCurrentPosition(onPositionReceived, onPositionError);
             } else {
                 alert("La géolocalisation n'est pas supportée par ce navigateur.");
             }
+        }
+
+        function onPositionReceived(position) {
+            var userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            initializeMap(userLocation);
+            addUserMarker(userLocation);
+            addRadarMarkers();
+            checkProximity(userLocation);
+        }
+
+        function onPositionError() {
+            alert("Erreur de géolocalisation.");
+        }
+
+        function initializeMap(userLocation) {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: userLocation,
+                zoom: 14
+            });
+        }
+
+        function addUserMarker(userLocation) {
+            const icon = {
+                url: "./images/position.png",
+                scaledSize: new google.maps.Size(50, 50),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(25, 25)
+            };
+
+            userMarker = new google.maps.Marker({
+                position: userLocation,
+                map: map,
+                icon: icon,
+                title: 'Vous êtes ici'
+            });
+        }
+
+        function addRadarMarkers() {
+            radarMarkers.forEach(function(radar) {
+                new google.maps.Marker({
+                    position: radar,
+                    map: map,
+                    title: radar.title
+                });
+            });
         }
 
         // Fonction pour vérifier la proximité et jouer un son
@@ -3352,15 +3361,15 @@
                 }
             });
 
-            // Rafraîchir la position de l'utilisateur toutes les 5 secondes
+            // Rafraîchir la position de l'utilisateur toutes les 3 secondes
             setTimeout(function() {
                 checkProximity(userLocation);
-            }, 5000);
+            }, 3000);
         }
 
         // Fonction pour jouer un son
         function playSound() {
-            var audio = new Audio('file:///C:/Users/lbred/Downloads/ALRMClok_Reveil%20electronique%20sonnerie%201%20(ID%200035)_LS.wav');
+            var audio = new Audio('./ALRMClok.wav');
             audio.play();
         }
 
@@ -3368,6 +3377,6 @@
         window.onload = initMap;
     </script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGFywqcaiCQdZTSyzkIUnHA3twrdwY8mo&libraries=geometry"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGFywqcaiCQdZTSyzkIUnHA3twrdwY8mo&libraries=geometry"></script>
 </body>
 </html>
