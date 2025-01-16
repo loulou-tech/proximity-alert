@@ -18,7 +18,6 @@
     <script>
         var map;
         var userMarker;
-        var audio;
         var radarMarkers = [
 			{ lat: 49.95842, lng: 2.85479, title: '101' },
 			{ lat: 48.67029, lng: 2.27976, title: '103' },
@@ -3381,18 +3380,14 @@
 
         // Fonction pour jouer un son
         function playSound() {
-            if (!audio) {
-                audio = new Audio('./ALRMClok.wav');
-            }
+            var audio = new Audio('./ALRMClok.wav');
             audio.play();
         }
 
         // Fonction pour arrêter le son
         function stopSound() {
-            if (audio) {
                 audio.pause();
                 audio.currentTime = 0;
-            }
         }
 
         // Initialisation de la carte à la charge de la page
