@@ -18,7 +18,7 @@
     <script>
         var map;
         var userMarker;
-        var alertPlayed = false;
+        var audio;
         var radarMarkers = [
 			{ lat: 49.95842, lng: 2.85479, title: '101' },
 			{ lat: 48.67029, lng: 2.27976, title: '103' },
@@ -3289,7 +3289,7 @@
 			{ lat: 48.97519, lng: 2.33751, title: 'FE395502' }
         ];
 
-        // Fonction d'initialisation de la carte pour afficher la position de l'utilisateur
+		// Fonction d'initialisation de la carte pour afficher la position de l'utilisateur
         function initMap() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(onPositionReceived, onPositionError);
@@ -3363,7 +3363,6 @@
 
         // Fonction pour vérifier la proximité et jouer un son
         function checkProximity(userLocation) {
-            var isNearRadar = false;
             radarMarkers.forEach(function(radar) {
                 var userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
                 var radarLatLng = new google.maps.LatLng(radar.lat, radar.lng);
@@ -3373,24 +3372,27 @@
 
                 // Si la distance est inférieure à 500 mètres, jouer un son
                 if (distance < 500) {
-                    isNearRadar = true;
-                    if (!alertPlayed) {
-                        playSound();
-                        alertPlayed = true;
-                    }
+                    playSound();
+                } else {
+                    stopSound();
                 }
             });
-
-            // Réinitialiser l'alerte si l'utilisateur est à plus de 500 mètres de tous les radars
-            if (!isNearRadar) {
-                alertPlayed = false;
-            }
         }
 
         // Fonction pour jouer un son
         function playSound() {
-            var audio = new Audio('./ALRMClok.wav');
+            if (!audio) {
+                audio = new Audio('./ALRMClok.wav');
+            }
             audio.play();
+        }
+
+        // Fonction pour arrêter le son
+        function stopSound() {
+            if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
         }
 
         // Initialisation de la carte à la charge de la page
