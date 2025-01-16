@@ -3288,7 +3288,7 @@
 			{ lat: 48.97519, lng: 2.33751, title: 'FE395502' }
         ];
 
-        // Fonction d'initialisation de la carte pour afficher la position de l'utilisateur
+		// Fonction d'initialisation de la carte pour afficher la position de l'utilisateur
         function initMap() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(onPositionReceived, onPositionError);
@@ -3303,10 +3303,19 @@
                 lng: position.coords.longitude
             };
 
-            initializeMap(userLocation);
-            addUserMarker(userLocation);
-            addRadarMarkers();
+            if (!map) {
+                initializeMap(userLocation);
+                addUserMarker(userLocation);
+                addRadarMarkers();
+            } else {
+                updateUserMarker(userLocation);
+            }
             checkProximity(userLocation);
+
+            // Rafraîchir la position de l'utilisateur toutes les 3 secondes
+            setTimeout(function() {
+                navigator.geolocation.getCurrentPosition(onPositionReceived, onPositionError);
+            }, 3000);
         }
 
         function onPositionError() {
@@ -3336,6 +3345,11 @@
             });
         }
 
+        function updateUserMarker(userLocation) {
+            userMarker.setPosition(userLocation);
+            map.setCenter(userLocation);
+        }
+
         function addRadarMarkers() {
             radarMarkers.forEach(function(radar) {
                 new google.maps.Marker({
@@ -3360,11 +3374,6 @@
                     playSound();
                 }
             });
-
-            // Rafraîchir la position de l'utilisateur toutes les 3 secondes
-            setTimeout(function() {
-                checkProximity(userLocation);
-            }, 3000);
         }
 
         // Fonction pour jouer un son
