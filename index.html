@@ -3373,7 +3373,7 @@
                 if (distance < 500) {
                     playSound();
                 } else {
-                    stopSound();
+                    console.log("Vous êtes à plus de 500 mètres du radar le plus proche.");
                 }
             });
         }
@@ -3382,12 +3382,6 @@
         function playSound() {
             var audio = new Audio('./ALRMClok.wav');
             audio.play();
-        }
-
-        // Fonction pour arrêter le son
-        function stopSound() {
-                audio.pause();
-                audio.currentTime = 0;
         }
 
         // Initialisation de la carte à la charge de la page
