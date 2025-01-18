@@ -3291,7 +3291,11 @@
 		// Fonction d'initialisation de la carte pour afficher la position de l'utilisateur
         function initMap() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(onPositionReceived, onPositionError);
+                navigator.geolocation.watchPosition(onPositionReceived, onPositionError, {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 27000
+                });
             } else {
                 alert("La géolocalisation n'est pas supportée par ce navigateur.");
             }
@@ -3311,11 +3315,6 @@
                 updateUserMarker(userLocation);
             }
             checkProximity(userLocation);
-
-            // Rafraîchir la position de l'utilisateur toutes les 3 secondes
-            setTimeout(function() {
-                navigator.geolocation.getCurrentPosition(onPositionReceived, onPositionError);
-            }, 3000);
         }
 
         function onPositionError() {
