@@ -1,25 +1,40 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte des Radars - Proximité</title>
+    <title>Carte de Géolocalisation</title>
+    <style>
+        #map {
+            height: 100%;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #radiusSlider {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 5;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #999;
+        }
+    </style>
 </head>
 <body>
-    <h1>Carte des Radars en France</h1>
-    <p>Cette carte affiche les radars en France et vous alerte lorsque vous vous approchez d'un radar.</p>
-
-    <h2>Votre Position et Alerte Sonore</h2>
-    <p>Votre position est détectée ci-dessous, et une alerte sonore sera déclenchée lorsque vous vous approcherez des radars.</p>
-
-    <!-- Zone pour afficher la carte centrée sur la position de l'utilisateur -->
-    <div id="map" style="height: 500px; width: 100%;"></div>
+    <div id="radiusSlider">
+        <label for="radius">Rayon de déclenchement de l'alarme (mètres) :</label>
+        <input type="range" id="radius" name="radius" min="20" max="500" value="500" oninput="updateRadiusValue(this.value)">
+        <span id="radiusValue">500</span> m
+    </div>
+    <div id="map"></div>
 
     <script>
         var map;
         var userMarker;
         var radarMarkers = [
-			{ lat: 49.95842, lng: 2.85479, title: '101' },
+            { lat: 49.95842, lng: 2.85479, title: '101' },
 			{ lat: 48.67029, lng: 2.27976, title: '103' },
 			{ lat: 48.63212, lng: 2.4065, title: '105' },
 			{ lat: 48.83313, lng: 2.08501, title: '106' },
@@ -3287,8 +3302,8 @@
 			{ lat: 48.97523, lng: 2.33639, title: 'FE395501' },
 			{ lat: 48.97519, lng: 2.33751, title: 'FE395502' }
         ];
+        var alarmRadius = 500;
 
-		// Fonction d'initialisation de la carte pour afficher la position de l'utilisateur
         function initMap() {
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(onPositionReceived, onPositionError, {
@@ -3359,7 +3374,6 @@
             });
         }
 
-        // Fonction pour vérifier la proximité et jouer un son
         function checkProximity(userLocation) {
             radarMarkers.forEach(function(radar) {
                 var userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
@@ -3368,22 +3382,24 @@
                 var distance = google.maps.geometry.spherical.computeDistanceBetween(userLatLng, radarLatLng);
                 console.log("Distance au radar : " + distance + " mètres");
 
-                // Si la distance est inférieure à 500 mètres, jouer un son
-                if (distance < 500) {
+                if (distance < alarmRadius) {
                     playSound();
                 } else {
-                    console.log("Vous êtes à plus de 500 mètres du radar le plus proche.");
+                    console.log("Vous êtes à plus de " + alarmRadius + " mètres du radar le plus proche.");
                 }
             });
         }
 
-        // Fonction pour jouer un son
         function playSound() {
             var audio = new Audio('./ALRMClok.wav');
             audio.play();
         }
 
-        // Initialisation de la carte à la charge de la page
+        function updateRadiusValue(value) {
+            alarmRadius = value;
+            document.getElementById('radiusValue').innerText = value;
+        }
+
         window.onload = initMap;
     </script>
 
