@@ -19,6 +19,8 @@
             background: #fff;
             padding: 10px;
             border: 1px solid #999;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
         #radiusSlider input[type="range"] {
             -webkit-appearance: none;
@@ -48,22 +50,6 @@
             border-radius: 50%;
             background: #4CAF50;
             cursor: pointer;
-        }
-
-        /* Agrandir le curseur pour les petits écrans */
-        @media (max-width: 768px) {
-            #radiusSlider input[type="range"] {
-                width: 300px;
-                height: 20px;
-            }
-            #radiusSlider input[type="range"]::-webkit-slider-thumb {
-                width: 40px;
-                height: 40px;
-            }
-            #radiusSlider input[type="range"]::-moz-range-thumb {
-                width: 40px;
-                height: 40px;
-            }
         }
     </style>
 </head>
