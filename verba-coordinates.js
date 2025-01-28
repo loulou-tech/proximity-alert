@@ -1,5 +1,5 @@
 var verbaMarkersData = [
-    { lat: 48.837464, lng: 285098, title: 'Lecourbe / Thoreton' },
+    { lat: 48.837464, lng: 2.285098, title: 'Lecourbe / Thoreton' },
     { lat: 48.848964, lng: 2.283461, title: 'Verseau / Perspective 1' },
     { lat: 48.834504, lng: 2.284018, title: 'Bd Victor / Desnouettes' },
     { lat: 48.845398, lng: 2.28246, title: 'Javel / Gutemberg' },
